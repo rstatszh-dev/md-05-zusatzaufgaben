@@ -1,0 +1,160 @@
+---
+title: "Lernende im Kanton Zürich"
+author: ""
+format:
+  html:
+    embed-resources: true
+editor: visual
+execute:
+  warning: false
+editor_options: 
+  chunk_output_type: console
+---
+
+## R-Pakete laden
+
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+```
+
+## Daten importieren
+
+### Daten
+
+Titel: Übersicht über alle Lernenden im Kanton Zürich ab 2000
+
+Die Übersicht zeigt alle Lernenden im Kanton Zürich, nach Schulstufen und nach Schultypen. Studierende der Tertiärstufe 5A (Hochschulen) sind nicht enthalten. Die Daten werden jährlich für den Stichtag 15.9. erhoben.
+
+Die Daten können über folgenden Link im Datenkatalog aufgerufen werden: <https://www.zh.ch/de/politik-staat/statistik-daten/datenkatalog.html#/datasets/524@bildungsstatistik-kanton-zuerich>
+
+
+```{r}
+# Die Daten werden hier direkt von der URL gelesen. Bei einem Update der Daten
+# wird hier immer auf die aktuellste Version zugegriffen.
+link <- "https://www.web.statistik.zh.ch/ogd/data/bista/ZH_Uebersicht_alle_Lernende.csv"
+
+# Hier wird nun das Objekt "link" genutzt um die CSV zu lesen
+lernende_in <- read_csv(file = link)
+
+```
+
+## Daten erkunden
+
+1. Nutze die dir bekannten Funktionen um die Daten zu erkunden.
+
+2. Wieviele Spalten hat der Datensatz?
+
+3. Wieviele Zeilen hat der Datensatz? 
+
+4. Nutze die Funktion `glimpse(lernende)` und beschreibe die Variablen Typen
+
+- Numerisch oder nicht numerisch?
+- Falls numerisch, diskret oder kontinuierlich?    
+- Falls nicht numerisch, ordinal oder nicht ordinal? 
+
+```{r}
+glimpse(lernende_in)
+```
+
+## Daten transformieren
+
+1. Die Spalten `Traegerschaft` und `Finanzierung` enthalten die Werte `oef` und `priv`. Ersetze diese Werte durch `öffentlich` und `privat`.
+
+2. Die Spalte `Geschlecht` enthält die Werte `2`, `F`, `M`, `f`, und `m` und `F`. Ersetze diese Werte durch `männlich` und `weiblich`, entferne die Zeilen mit `2`.
+
+```{r}
+
+lernende <- lernende_in |> 
+    filter(Geschlecht != 2) |> 
+    mutate(Geschlecht = case_when(
+        Geschlecht %in% c("m", "M") ~ "männlich",
+        Geschlecht %in% c("f", "F") ~ "weiblich"
+    )) |> 
+    mutate(Geschlecht = case_when(
+        Geschlecht == "M" ~ "männlich",
+        Geschlecht == "F" ~ "weiblich"
+    )) |> 
+    mutate(Traegerschaft = case_when(
+        Traegerschaft == "oef" ~ "öffentlich",
+        Traegerschaft == "priv" ~ "privat"
+    )) |>
+    mutate(Finanzierung = case_when(
+        Finanzierung == "oef" ~ "öffentlich",
+        Finanzierung == "priv" ~ "privat")
+    ) 
+```
+
+## Daten eingrenzen
+
+```{r}
+lernende2022 <- lernende |> 
+    filter(Jahr == max(Jahr))
+```
+
+## Daten zusammenfassen
+
+```{r}
+lernende2022_stufe_staat_sum <- lernende2022 |> 
+    group_by(Stufe, Staatsangehoerigkeit)  |> 
+    summarise(
+        Total = sum(Anzahl)
+    ) |> 
+    mutate(Prozent = Total / sum(Total) * 100) 
+```
+
+## Daten visualisieren
+
+1. Versuche den Plot aus der Beschreibung für die Hausaufgabe zu rekonstruieren. 
+
+```{r}
+ggplot(data = lernende2022_stufe_staat_sum,
+       mapping = aes(x = Stufe, 
+                     y = Prozent, 
+                     fill = Staatsangehoerigkeit)) +
+    coord_flip() +
+    geom_col() +
+    geom_text(aes(label = round(Prozent, 0)),  
+              position = position_stack(vjust = 0.5)) +
+    labs(title = "Lernende im Kanton Zürich nach Staatsangehörigkeit und Stufe",
+         subtitle = "In % für das Jahr 2022",
+         fill = "Staatsangehörigkeit",
+         caption = "Daten: zh.ch/daten") +
+    theme_minimal() +
+    theme(legend.position = "bottom", panel.grid.major.y = element_blank())
+```
+
+## Übung 6 - Kurzanalyse (**Bonus**)
+
+Der Code für diese Aufgabe ist vorbereitet. Es geht hier darum die Lücken auszufüllen. Jede Lücke hat einen Platzhalter mit drei Unterstrichen ___, unabhänig davon wie viele Zeichen ersetzt werden sollen. 
+
+Beginne mit dem `lernende_in` Dataframe und erstelle eine Code Sequenz mit folgenden Abschnitten:
+
+1. Nutze `group_by()` und `summarise()` um das Total der Lernenden pro Jahr zu erhalten und gebe der neuen Spalte den Namen "Total". Nutze die Pipe um den resultierenden Dataframe in die nächste Funktion zu schicken.
+
+2. Nutze die Funktion `mutate()` um eine neue Spalte names "Differenz" zu erstellen. Diese Spalte soll die Differenz des Total der Anzahl Lernenden zwischen den Jahren angeben. **Tipp: Nutze die Funktion `lag()`**
+
+3. Nutze die Funktion `mutate()` in Kombination mit der Funktion `case_when()` um eine neue Spalte mit dem Namen "Veraenderung" zu erstellen. Diese Spalte soll angeben ob die Anzahl Lernenden im jeweiligen Jahr zugenommen oder abgenommen habt. 
+
+```{r}
+
+lernende_in %>%   
+    group_by(Jahr) %>% 
+    summarise(
+        Total = sum(Anzahl)
+    ) %>% 
+    mutate(
+        Differenz = Total - lag(Total)
+    ) %>% 
+    mutate(
+        Veraenderung = case_when(
+            Differenz > 0 ~ "Zunahme",
+            Differenz < 0 ~ "Abnahme"
+        )
+    )
+
+```
+
+## Daten kommunizieren
