@@ -55,7 +55,7 @@ lernende_in <- read_csv(file = link)
 -   Falls nicht numerisch, ordinal oder nicht ordinal?
 
 ```{r}
-
+glimpse(lernende_in)
 ```
 
 ## Aufgabe 2: Daten transformieren
@@ -75,6 +75,20 @@ lernende_in <- read_csv(file = link)
 
 ```{r}
 
+lernende <- lernende_in |> 
+    filter(Geschlecht != 2) |> 
+    mutate(Geschlecht = case_when(
+        Geschlecht %in% c("m", "M") ~ "männlich",
+        Geschlecht %in% c("f", "F") ~ "weiblich"
+    )) |> 
+    mutate(Traegerschaft = case_when(
+        Traegerschaft == "oef" ~ "öffentlich",
+        Traegerschaft == "priv" ~ "privat"
+    )) |>
+    mutate(Finanzierung = case_when(
+        Finanzierung == "oef" ~ "öffentlich",
+        Finanzierung == "priv" ~ "privat")
+    ) 
 ```
 
 ## Aufgabe 3: Daten eingrenzen
@@ -84,7 +98,8 @@ lernende_in <- read_csv(file = link)
 2.  Speicher das Ergebnis in einem neuen Dataframe `lernende2022` mittels des Zuweisungsoperators `<-`.
 
 ```{r}
-
+lernende2022 <- lernende |> 
+    filter(Jahr == max(Jahr))
 ```
 
 ## Aufgabe 4: Daten zusammenfassen
@@ -98,7 +113,12 @@ lernende_in <- read_csv(file = link)
 4.  Falls keine Fehler auftauchen wenn du den Code laufen lässt, mache einen Commit mit der Commit-Nachricht: "Daten zusammenfassen"
 
 ```{r}
-
+lernende2022_stufe_staat_sum <- lernende2022 |> 
+    group_by(Stufe, Staatsangehoerigkeit)  |> 
+    summarise(
+        Total = sum(Anzahl)
+    ) |> 
+    mutate(Prozent = Total / sum(Total) * 100) 
 ```
 
 ## Aufgabe 5: Daten visualisieren
@@ -108,7 +128,22 @@ lernende_in <- read_csv(file = link)
 2.  Sobald du mit deinem Diagramm zufrieden bist, machen einen Commit mit der Commit-Nachricht: "Plot rekonstruieren"
 
 ```{r}
-
+ggplot(data = lernende2022_stufe_staat_sum,
+       mapping = aes(x = Stufe, 
+                     y = Prozent, 
+                     fill = Staatsangehoerigkeit)) +
+    coord_flip() +
+    geom_col() +
+    geom_text(aes(label = paste0(round(Prozent, 0), "%")),  
+              position = position_stack(vjust = 0.5)) +
+    labs(title = "Lernende im Kanton Zürich ",
+         subtitle = "nach Staatsangehörigkeit und Stufe im Jahr 2022",
+         fill = "Staatsangehörigkeit",
+         caption = "Daten: zh.ch/daten",
+         y = NULL,
+         x = NULL) +
+    theme_minimal() +
+    theme(legend.position = "bottom", panel.grid.major.y = element_blank())
 ```
 
 ## Aufgabe 6: Eigene Erkundungen machen (**Bonus**)
@@ -116,11 +151,31 @@ lernende_in <- read_csv(file = link)
 Der Datensatz hat noch spannende weitere Variablen. Welche zusätzlichen Fragen möchtest du an diesen Datensatz stellen?
 
 ```{r}
-
+lernende2022_stufe_traegerschaft_sum <- lernende2022 |> 
+    group_by(Stufe, Traegerschaft)  |>
+     summarise(
+        Total = sum(Anzahl)
+    ) |> 
+    mutate(Prozent = Total / sum(Total) * 100) 
 ```
 
 ```{r}
-
+ggplot(data = lernende2022_stufe_traegerschaft_sum,
+       mapping = aes(x = Stufe, 
+                     y = Prozent, 
+                     fill = Traegerschaft)) +
+    coord_flip() +
+    geom_col() +
+    geom_text(aes(label = paste0(round(Prozent, 0), "%")),  
+              position = position_stack(vjust = 0.5)) +
+    labs(title = "Lernende im Kanton Zürich ",
+         subtitle = "nach Traegerschaft und Stufe im Jahr 2022",
+         fill = "Traegerschaft",
+         caption = "Daten: zh.ch/daten",
+         y = NULL,
+         x = NULL) +
+    theme_minimal() +
+    theme(legend.position = "bottom", panel.grid.major.y = element_blank())
 ```
 
 ## Daten kommunizieren
