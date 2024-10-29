@@ -48,7 +48,7 @@ lernende_in <- read_csv(file = link)
 
 3.  Wieviele Zeilen hat der Datensatz?
 
-4.  Nutze die Funktion `glimpse(lernende)` und beschreibe die Variablen Typen
+4.  Nutze die Funktion `glimpse(lernende_in)` und beschreibe die Variablen Typen
 
 -   Numerisch oder nicht numerisch?
 -   Falls numerisch, diskret oder kontinuierlich?
@@ -60,7 +60,7 @@ lernende_in <- read_csv(file = link)
 
 ## Aufgabe 2: Daten transformieren
 
-1.  Die Spalte `Geschlecht` enthält die Werte `2`, `F`, `M`, `f`, und `m` und `F`.
+1.  Die Spalte `Geschlecht` enthält die Werte `2`, `F`, `M`, `f`, und `m`.
 
 -   Nutze `filter()` um die Zeilen mit dem Wert `2` zu entfernen
 -   Nutze `mutate()` und `case_when()` um die Werte `F`, `M`, `f` und `m` in `weiblich` und `männlich` umzuwandeln.
