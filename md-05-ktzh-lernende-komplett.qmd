@@ -153,7 +153,7 @@ Der Datensatz hat noch spannende weitere Variablen. Welche zusätzlichen Fragen 
 ```{r}
 lernende2022_stufe_traegerschaft_sum <- lernende2022 |> 
     group_by(Stufe, Traegerschaft)  |>
-     summarise(
+    summarise(
         Total = sum(Anzahl)
     ) |> 
     mutate(Prozent = Total / sum(Total) * 100) 
@@ -177,6 +177,42 @@ ggplot(data = lernende2022_stufe_traegerschaft_sum,
     theme_minimal() +
     theme(legend.position = "bottom", panel.grid.major.y = element_blank())
 ```
+
+## Aufgabe 7: Werte in der Legende drehen (lediglich Demonstration)
+
+```{r}
+# Schritt 1: Staatsangehörigkeit zu einem factor machen
+
+levels_staat <- c("Ausland", "Schweiz")
+
+lernende2022_stufe_staat_sum_fct <-  lernende2022_stufe_staat_sum |> 
+    mutate(Staatsangehoerigkeit = factor(Staatsangehoerigkeit, levels = levels_staat))
+
+# Schritt 2: Die Werte mittels scale_fill_discrete in umgekeherter Reihenfolge
+# zurückgeben
+
+ggplot(data = lernende2022_stufe_staat_sum_fct,
+       mapping = aes(x = Stufe, 
+                     y = Prozent, 
+                     fill = Staatsangehoerigkeit)) +
+    coord_flip() +
+    geom_col() +
+    geom_text(aes(label = paste0(round(Prozent, 0), "%")),  
+              position = position_stack(vjust = 0.5)) +
+    labs(title = "Lernende im Kanton Zürich ",
+         subtitle = "nach Staatsangehörigkeit und Stufe im Jahr 2022",
+         fill = "Staatsangehörigkeit",
+         caption = "Daten: zh.ch/daten",
+         y = NULL,
+         x = NULL) +
+    theme_minimal() +
+    theme(legend.position = "bottom", 
+          panel.grid.major.y = element_blank()) +
+    # Anpassung hier:
+    scale_fill_discrete(breaks = rev(levels_staat))
+
+```
+
 
 ## Daten kommunizieren
 
