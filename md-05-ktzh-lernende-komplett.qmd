@@ -95,25 +95,25 @@ lernende <- lernende_in |>
 
 1.  Nutze `lernende` und filtere die Daten so, dass nur die Zeilen für das zuletzt verfügbare Jahr im Datensatz verbleiben.
 
-2.  Speicher das Ergebnis in einem neuen Dataframe `lernende2022` mittels des Zuweisungsoperators `<-`.
+2.  Speicher das Ergebnis in einem neuen Dataframe `lernende_max` mittels des Zuweisungsoperators `<-`.
 
 ```{r}
-lernende2022 <- lernende |> 
+lernende_max <- lernende |> 
     filter(Jahr == max(Jahr))
 ```
 
 ## Aufgabe 4: Daten zusammenfassen
 
-1.  Gruppiere `lernende2022` nach `Stufe` und `Staatsangehoerigkeit` und berechne die Summe der Lernenden pro Gruppe (Häufigkeitstabelle).
+1.  Gruppiere `lernende_max` nach `Stufe` und `Staatsangehoerigkeit` und berechne die Summe der Lernenden pro Gruppe (Häufigkeitstabelle).
 
 2.  Berechne die Prozentwerte der Lernenden pro Gruppe.
 
-3.  Speicher das Ergebnis in einem neuen Daten-Objekt `lernende2022_stufe_staat_sum` mittels des Zuweisungsoperators `<-`.
+3.  Speicher das Ergebnis in einem neuen Daten-Objekt `lernende_max_stufe_staat_sum` mittels des Zuweisungsoperators `<-`.
 
 4.  Falls keine Fehler auftauchen wenn du den Code laufen lässt, mache einen Commit mit der Commit-Nachricht: "Daten zusammenfassen"
 
 ```{r}
-lernende2022_stufe_staat_sum <- lernende2022 |> 
+lernende_max_stufe_staat_sum <- lernende_max |> 
     group_by(Stufe, Staatsangehoerigkeit)  |> 
     summarise(
         Total = sum(Anzahl)
@@ -123,12 +123,12 @@ lernende2022_stufe_staat_sum <- lernende2022 |>
 
 ## Aufgabe 5: Daten visualisieren
 
-1.  Versuche den Plot aus der Beschreibung für die Zusatzaufgabe mittels des Daten-Objekts `lernende2022_stufe_staat_sum` zu rekonstruieren.
+1.  Versuche den Plot aus der Beschreibung für die Zusatzaufgabe mittels des Daten-Objekts `lernende_max_stufe_staat_sum` zu rekonstruieren.
 
 2.  Sobald du mit deinem Diagramm zufrieden bist, machen einen Commit mit der Commit-Nachricht: "Plot rekonstruieren"
 
 ```{r}
-ggplot(data = lernende2022_stufe_staat_sum,
+ggplot(data = lernende_max_stufe_staat_sum,
        mapping = aes(x = Stufe, 
                      y = Prozent, 
                      fill = Staatsangehoerigkeit)) +
@@ -137,7 +137,7 @@ ggplot(data = lernende2022_stufe_staat_sum,
     geom_text(aes(label = paste0(round(Prozent, 0), "%")),  
               position = position_stack(vjust = 0.5)) +
     labs(title = "Lernende im Kanton Zürich ",
-         subtitle = "nach Staatsangehörigkeit und Stufe im Jahr 2022",
+         subtitle = "nach Staatsangehörigkeit und Stufe im Jahr 2023",
          fill = "Staatsangehörigkeit",
          caption = "Daten: zh.ch/daten",
          y = NULL,
@@ -151,7 +151,7 @@ ggplot(data = lernende2022_stufe_staat_sum,
 Der Datensatz hat noch spannende weitere Variablen. Welche zusätzlichen Fragen möchtest du an diesen Datensatz stellen?
 
 ```{r}
-lernende2022_stufe_traegerschaft_sum <- lernende2022 |> 
+lernende_max_stufe_traegerschaft_sum <- lernende_max |> 
     group_by(Stufe, Traegerschaft)  |>
     summarise(
         Total = sum(Anzahl)
@@ -160,7 +160,7 @@ lernende2022_stufe_traegerschaft_sum <- lernende2022 |>
 ```
 
 ```{r}
-ggplot(data = lernende2022_stufe_traegerschaft_sum,
+ggplot(data = lernende_max_stufe_traegerschaft_sum,
        mapping = aes(x = Stufe, 
                      y = Prozent, 
                      fill = Traegerschaft)) +
@@ -169,7 +169,7 @@ ggplot(data = lernende2022_stufe_traegerschaft_sum,
     geom_text(aes(label = paste0(round(Prozent, 0), "%")),  
               position = position_stack(vjust = 0.5)) +
     labs(title = "Lernende im Kanton Zürich ",
-         subtitle = "nach Traegerschaft und Stufe im Jahr 2022",
+         subtitle = "nach Traegerschaft und Stufe im Jahr 2023",
          fill = "Traegerschaft",
          caption = "Daten: zh.ch/daten",
          y = NULL,
@@ -185,13 +185,13 @@ ggplot(data = lernende2022_stufe_traegerschaft_sum,
 
 levels_staat <- c("Ausland", "Schweiz")
 
-lernende2022_stufe_staat_sum_fct <-  lernende2022_stufe_staat_sum |> 
+lernende_max_stufe_staat_sum_fct <-  lernende_max_stufe_staat_sum |> 
     mutate(Staatsangehoerigkeit = factor(Staatsangehoerigkeit, levels = levels_staat))
 
 # Schritt 2: Die Werte mittels scale_fill_discrete in umgekeherter Reihenfolge
 # zurückgeben
 
-ggplot(data = lernende2022_stufe_staat_sum_fct,
+ggplot(data = lernende_max_stufe_staat_sum_fct,
        mapping = aes(x = Stufe, 
                      y = Prozent, 
                      fill = Staatsangehoerigkeit)) +
@@ -200,7 +200,7 @@ ggplot(data = lernende2022_stufe_staat_sum_fct,
     geom_text(aes(label = paste0(round(Prozent, 0), "%")),  
               position = position_stack(vjust = 0.5)) +
     labs(title = "Lernende im Kanton Zürich ",
-         subtitle = "nach Staatsangehörigkeit und Stufe im Jahr 2022",
+         subtitle = "nach Staatsangehörigkeit und Stufe im Jahr 2023",
          fill = "Staatsangehörigkeit",
          caption = "Daten: zh.ch/daten",
          y = NULL,
@@ -212,7 +212,6 @@ ggplot(data = lernende2022_stufe_staat_sum_fct,
     scale_fill_discrete(breaks = rev(levels_staat))
 
 ```
-
 
 ## Daten kommunizieren
 

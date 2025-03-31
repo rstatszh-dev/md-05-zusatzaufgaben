@@ -81,7 +81,7 @@ lernende_in <- read_csv(file = link)
 
 1.  Nutze `lernende` und filtere die Daten so, dass nur die Zeilen für das zuletzt verfügbare Jahr im Datensatz verbleiben.
 
-2.  Speicher das Ergebnis in einem neuen Dataframe `lernende2022` mittels des Zuweisungsoperators `<-`.
+2.  Speicher das Ergebnis in einem neuen Dataframe `lernende_max` mittels des Zuweisungsoperators `<-`.
 
 ```{r}
 
@@ -89,11 +89,11 @@ lernende_in <- read_csv(file = link)
 
 ## Aufgabe 4: Daten zusammenfassen
 
-1.  Gruppiere `lernende2022` nach `Stufe` und `Staatsangehoerigkeit` und berechne die Summe der Lernenden pro Gruppe (Häufigkeitstabelle).
+1.  Gruppiere `lernende_max` nach `Stufe` und `Staatsangehoerigkeit` und berechne die Summe der Lernenden pro Gruppe (Häufigkeitstabelle).
 
 2.  Berechne die Prozentwerte der Lernenden pro Gruppe.
 
-3.  Speicher das Ergebnis in einem neuen Daten-Objekt `lernende2022_stufe_staat_sum` mittels des Zuweisungsoperators `<-`.
+3.  Speicher das Ergebnis in einem neuen Daten-Objekt `lernende_max_stufe_staat_sum` mittels des Zuweisungsoperators `<-`.
 
 4.  Falls keine Fehler auftauchen wenn du den Code laufen lässt, mache einen Commit mit der Commit-Nachricht: "Daten zusammenfassen"
 
@@ -103,7 +103,7 @@ lernende_in <- read_csv(file = link)
 
 ## Aufgabe 5: Daten visualisieren
 
-1.  Versuche den Plot aus der Beschreibung für die Zusatzaufgabe mittels des Daten-Objekts `lernende2022_stufe_staat_sum` zu rekonstruieren.
+1.  Versuche den Plot aus der Beschreibung für die Zusatzaufgabe mittels des Daten-Objekts `lernende_max_stufe_staat_sum` zu rekonstruieren.
 
 2.  Sobald du mit deinem Diagramm zufrieden bist, machen einen Commit mit der Commit-Nachricht: "Plot rekonstruieren"
 
