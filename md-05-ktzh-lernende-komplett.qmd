@@ -60,10 +60,11 @@ glimpse(lernende_in)
 
 ## Aufgabe 2: Daten transformieren
 
-1.  Die Spalte `Geschlecht` enthält die Werte `2`, `F`, `M`, `f`, und `m` und `F`.
+1.  Die Spalte `Geschlecht` enthält die Werte `F`, `M`, `f`, und `m`.
 
--   Nutze `filter()` um die Zeilen mit dem Wert `2` zu entfernen
--   Nutze `mutate()` und `case_when()` um die Werte `F`, `M`, `f` und `m` in `weiblich` und `männlich` umzuwandeln.
+2.  Nutze `mutate()` und `case_when()` um die Werte `F`, `M`, `f` und `m` in `weiblich` und `männlich` umzuwandeln.
+
+<!-- -->
 
 2.  Die Spalten `Traegerschaft` und `Finanzierung` enthalten die Werte `oef` und `priv`.
 
@@ -76,7 +77,6 @@ glimpse(lernende_in)
 ```{r}
 
 lernende <- lernende_in |> 
-    filter(Geschlecht != 2) |> 
     mutate(Geschlecht = case_when(
         Geschlecht %in% c("m", "M") ~ "männlich",
         Geschlecht %in% c("f", "F") ~ "weiblich"
